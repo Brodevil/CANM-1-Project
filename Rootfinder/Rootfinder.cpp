@@ -10,12 +10,12 @@ Rootfinder::Rootfinder(double tolerance, bool verbose){
     this->verbose=verbose;
 }
 
-double Rootfinder::Bisection_method(std::function<double(double)> f, double higher, double lower){
+double Rootfinder::Bisection_method(std::function<double(double)> f, double higher, double lower,int num_iter){
     if( f(lower)*f(higher)>0){
         cout<<"ERROR: the range specificed has even number of roots within it.\nTry other methods instead, or enter a valid range.";
-        return -1.0;
+        return 0.0;
     }
-    for(int i=0;i<2e3;i++){
+    for(int i=0;i<num_iter;i++){
         if(abs(f(lower))<(this->tol)){
             if(this->verbose)cout<<"Root found in "<<i<<"iterations, with"<<f(lower)<<"residue";
             return f(lower);
@@ -34,8 +34,8 @@ double Rootfinder::Bisection_method(std::function<double(double)> f, double high
         }
     }
 
-    cout<<"ERROR:Bisection method failed to converge within 2000 iterations. Kindly try other methods instead.\n";
-    return -1.0;
+    cout<<"ERROR:Bisection method failed to converge within "<<num_iter<< "iterations. Kindly try other methods instead.\n";
+    return 0.0;
 
 }
 
@@ -44,18 +44,35 @@ double Rootfinder::FDMderivative(std::function<double(double)> f,double x, doubl
     
 }
 
-double Rootfinder::Newton_Raphson(std::function<double(double)> f,double x0){
+double Rootfinder::Newton_Raphson(std::function<double(double)> f,double x0,int num_iter){
     double xprev=x0;
     double x_next=xprev;
 
-    for(int i=0;i<200;i++){
+    for(int i=0;i<num_iter;i++){
        xprev=x_next;
        if(abs(f(xprev))<(this->tol))return xprev;
        x_next=xprev-f(xprev)/(FDMderivative(f,xprev));
     }
 
-    cout<<"ERROR:Newton-Raphson failed to converge within 200 iterations. There is likely a numerical instability arriving within the function. Kindly try other methods\n";
-    
+    cout<<"ERROR:Newton-Raphson failed to converge within "<<num_iter<<"iterations. There is likely a numerical instability arriving within the function. Kindly try other methods\n";
+    return 0.0;
 }
+
+
+double Rootfinder::Secant_Method(std::function<double(double)> f,double x0,int num_iter){
+    double x_n2=x0;
+    double x_n1=x0*(1+1e-6);
+    double x_n=x_n1-(x_n1-x_n2)/(f(x_n1)-f(x_n2));
+    for(int i=0;i<num_iter;i++){
+       if(abs(f(x_n))<(this->tol))return x_n;
+       x_n2=x_n1;
+       x_n1=x_n;
+       x_n=x_n1-(x_n1-x_n2)/(f(x_n1)-f(x_n2));
+    }
+
+    cout<<"ERROR:Newton-Raphson failed to converge within "<<num_iter<<"iterations. There is likely a numerical instability arriving within the function. Kindly try other methods\n";
+    return 0.0;
+}
+
 
 
