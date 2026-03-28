@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <cmath>
+#include <limits>
 using namespace std;
 
 
@@ -13,7 +14,7 @@ Rootfinder::Rootfinder(double tolerance, bool verbose){
 double Rootfinder::Bisection_method(function<double(double)> f, double higher, double lower,int num_iter){
     if( f(lower)*f(higher)>0){
         cout<<"ERROR: the range specificed has even number of roots within it.\nTry other methods instead, or enter a valid range.";
-        return 0.0;
+        return numeric_limits<double>::quiet_NaN();
     }
     for(int i=0;i<num_iter;i++){
         if(abs(f(lower))<(this->tol)){
@@ -35,7 +36,7 @@ double Rootfinder::Bisection_method(function<double(double)> f, double higher, d
     }
 
     cout<<"ERROR:Bisection method failed to converge within "<<num_iter<< "iterations. Kindly try other methods instead.\n";
-    return 0.0;
+    return numeric_limits<double>::quiet_NaN();
 
 }
 
@@ -55,7 +56,7 @@ double Rootfinder::Newton_Raphson(function<double(double)> f,double x0,int num_i
     }
 
     cout<<"ERROR:Newton-Raphson failed to converge within "<<num_iter<<"iterations. There is likely a numerical instability arriving within the function. Kindly try other methods\n";
-    return 0.0;
+    return numeric_limits<double>::quiet_NaN();
 }
 
 
@@ -67,11 +68,11 @@ double Rootfinder::Secant_Method(function<double(double)> f,double x0,int num_it
        if(abs(f(x_n))<(this->tol))return x_n;
        x_n2=x_n1;
        x_n1=x_n;
-       x_n=x_n1-(x_n1-x_n2)/(f(x_n1)-f(x_n2));
+       x_n=x_n1-f(x_n1)*(x_n1-x_n2)/(f(x_n1)-f(x_n2));
     }
 
     cout<<"ERROR:Secant method failed to converge within "<<num_iter<<"iterations. There is likely a numerical instability arriving within the function. Kindly try other methods\n";
-    return 0.0;
+    return numeric_limits<double>::quiet_NaN();
 }
 
 
