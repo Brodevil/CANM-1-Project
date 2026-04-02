@@ -16,22 +16,21 @@ double Rootfinder::Bisection_method(function<double(double)> f, double higher, d
         cout<<"ERROR: the range specificed has even number of roots within it.\nTry other methods instead, or enter a valid range.";
         return numeric_limits<double>::quiet_NaN();
     }
+    double f_low=f(lower);
+    double f_high=f(higher);
     for(int i=0;i<num_iter;i++){
-        if(abs(f(lower))<(this->tol)){
-            if(this->verbose)cout<<"Root found in "<<i<<"iterations, with"<<f(lower)<<"residue";
-            return lower;
-        }
-        if(abs(f(higher))<(this->tol)){
-            if(this->verbose)cout<<"Root found in "<<i<<"iterations, with"<<f(higher)<<"residue";
-            return higher;
-        }
-        
         double mid=(lower+higher)/2;
-        if(f(mid)*f(higher)<0){
+        double f_mid=f(mid);
+        if(abs(f_mid)<tol){
+            return mid;
+        }
+        if(f_mid*f_high<0){
             lower=mid;
+            f_low=f_mid;
         }
         else{
             higher=mid;
+            f_high=f_mid;
         }
     }
 
